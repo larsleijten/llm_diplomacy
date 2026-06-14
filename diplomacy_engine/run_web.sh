@@ -2,7 +2,8 @@
 # Starts the Diplomacy web UI and game server.
 # Run from anywhere: bash diplomacy_engine/run_web.sh
 
-DIPLOMACY_REPO="C:/Users/z515232/repositories/diplomacy-repo"
+# Override with: DIPLOMACY_REPO=/path/to/repo bash diplomacy_engine/run_web.sh
+DIPLOMACY_REPO="${DIPLOMACY_REPO:-$HOME/repositories/diplomacy-repo}"
 WEB_DIR="$DIPLOMACY_REPO/diplomacy/web"
 
 echo ""
