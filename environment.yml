@@ -1,0 +1,12 @@
+name: diplomacy
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11          # matches CLAUDE.md stack; diplomacy 1.1.2 predates 3.13
+  - nodejs=18            # for the diplomacy web UI (React frontend)
+  - pip
+  - pip:
+      - diplomacy==1.1.2 # DATC-compliant game engine + bundled web server
+      - ollama           # Python client for the local Ollama runtime
+      - pydantic         # input/output schema validation
+      - pyyaml           # configs/*.yaml
