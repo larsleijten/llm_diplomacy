@@ -1,6 +1,6 @@
 # LLM Diplomacy Arena
 
-Local LLMs play the board game Diplomacy against each other — negotiating, betraying, and conquering Europe.
+Local LLMs play the board game Diplomacy against each other — negotiating, betraying, and conquering Europe. Please update this file to reflect any recent updates that were made to the code or the project. 
 
 ## Goal
 
@@ -15,6 +15,7 @@ Pit small language models against each other in full-press Diplomacy to explore:
 | LLM client | `ollama-python` |
 | Schema validation | Pydantic |
 | Language | Python 3.11+ |
+| Inference GPU | NVIDIA RTX 2080 Ti — **11 GB VRAM** (host: butterfree) |
 
 ## Project Structure (target)
 
@@ -68,13 +69,26 @@ Order notation: `A PAR - BUR` (move), `F BRE S A PAR - PIC` (support), `A MUN H`
 
 ## Target Models (Ollama)
 
-| Model | Params |
-|---|---|
-| `qwen3:4b` | 4B |
-| `gemma3:4b` | 4B |
-| `phi4-mini` | 3.8B |
-| `llama3.2:3b` | 3B |
-| `mistral:7b` | 7B (upper bound) |
+**VRAM budget (11 GB):** on the 2080 Ti, Q4_K_M weights **and** the KV cache for the
+(large) Diplomacy context must both fit. Diplomacy prompts are heavy — full board JSON,
+per-unit legal-order lists, message history — so keep weights ≤ ~7 GB to leave room for
+context. Sizes below are approximate Q4_K_M download sizes.
+
+| Model | Params | ~Q4_K_M | Fits 11 GB? | Role |
+|---|---|---|---|---|
+| `llama3.2:3b` | 3B | ~2.0 GB | ✅ easily | small-end probe |
+| `phi4-mini` | 3.8B | ~2.5 GB | ✅ | small-end probe |
+| `qwen3.5:4b` | 4B | ~2.7 GB | ✅ | small-end probe |
+| `gemma3:4b` | 4B | ~3.3 GB | ✅ | small-end probe |
+| `mistral:7b` | 7B | ~4.4 GB | ✅ | mid baseline |
+| `qwen3:8b` | 8B | 5.2 GB | ✅ | mid baseline |
+| `qwen3.5:9b` | 9.65B | 6.6 GB | ✅ **default / strong baseline** | upper bound that still fits |
+| `qwen3:14b` | 14B | 9.3 GB | ⚠️ tight — little KV headroom, short contexts only | stretch |
+| `qwen3.6:27b`+ | 27B+ | 17 GB+ | ❌ won't fit | needs a bigger GPU |
+
+**Recommended default: `qwen3.5:9b`** — newest generation that fits, switchable thinking
+mode (useful for strategy/deception, and toggleable to measure its effect), and ~4 GB left
+for context KV cache. `qwen3.6` starts at 27B and does not fit 11 GB.
 
 ## Roadmap
 
