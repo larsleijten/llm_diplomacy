@@ -1,7 +1,7 @@
 import os
 import ollama
 
-MODEL = os.environ.get("OLLAMA_MODEL", "qwen3:4b")
+MODEL = os.environ.get("OLLAMA_MODEL", "qwen3.5:9b")
 messages = []
 
 print(f"Chatting with {MODEL}. Type 'quit' or 'exit' to stop.\n")
@@ -23,7 +23,9 @@ while True:
 
     print("Assistant: ", end="", flush=True)
     reply = ""
-    for chunk in ollama.chat(model=MODEL, messages=messages, stream=True, options={"num_ctx": 2048}):
+    for chunk in ollama.chat(
+        model=MODEL, messages=messages, stream=True, options={"num_ctx": 2048}
+    ):
         token = chunk["message"]["content"]
         print(token, end="", flush=True)
         reply += token
